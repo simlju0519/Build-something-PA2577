@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  login-api:
+    build:
+      context: ./Backend/Login API
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    restart: always
+
+  wordle-api:
+    build:
+      context: ./Backend/Wordle API
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend/wordle-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/wordle-frontend:/app:cached
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # Enable polling
+      - CHOKIDAR_INTERVAL=500    # Optional: Poll every 500ms
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+      - NEXT_PUBLIC_WORDLE_API_URL=http://localhost:5001
+    restart: always

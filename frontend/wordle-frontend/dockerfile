@@ -1,0 +1,24 @@
+# Use Node.js for development
+FROM node:18
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package files first to leverage Docker's cache
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application files
+COPY . .
+
+# Expose port 3000
+EXPOSE 3000
+
+# Set environment variable to support src/app
+ENV NEXT_PUBLIC_API_URL=http://localhost:5000
+ENV NEXT_PUBLIC_WORDLE_API_URL=http://localhost:5001
+
+# Use Next.js development server for live reload
+CMD ["npm", "run", "dev"]

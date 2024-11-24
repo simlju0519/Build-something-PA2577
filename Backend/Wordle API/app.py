@@ -15,10 +15,11 @@ CORS(app, origins=["http://localhost:3000", "http://51.12.49.77", "http://localh
 
 @app.route("/")
 def home():
+    print("Hello World Wordle API!")
     return jsonify({"message": "Hello World Wordle API!"}), 200
 
 # Convert the WSGI Flask app to ASGI
 asgi_app = WsgiToAsgi(app)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)

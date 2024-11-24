@@ -1,18 +1,24 @@
-# Use the official Python image
+# Use a lightweight Python image
 FROM python:3.10-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the app files to the container
-COPY app.py ./
-COPY requirements.txt ./
+# Copy the current directory contents into the container
+COPY . .
 
-# Install required Python packages
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port 5001 for the container
+# Set environment variables for Flask development
+ENV FLASK_APP=API/app.py
+# This enables debug mode with hot-reloading
+ENV FLASK_ENV=development  
+
+# Install the required packages from requirements.txt
+RUN pip install -r requirements.txt
+WORKDIR /app
+
+# Expose the port Flask will run on
 EXPOSE 5001
 
-# Run the app
-CMD ["python", "app.py"]
+# Command to run Uvicorn with Flask in development mode
+CMD ["uvicorn", "app:asgi_app", "--host", "0.0.0.0", "--port", "5001", "--reload"]

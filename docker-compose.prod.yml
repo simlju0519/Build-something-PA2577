@@ -4,11 +4,16 @@ services:
   login-api:
     build:
       context: ./Backend/Login API
-      dockerfile: Dockerfile
-    volumes:
-      - ./Backend/Login API:/app:cached
+      dockerfile: dockerfile.prodLoginAPI  # Production-specific Dockerfile
     ports:
       - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - MYSQL_HOST=db
+      - MYSQL_PORT=3306
+      - MYSQL_DB=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     networks:
       - app-network
     restart: always
@@ -16,13 +21,12 @@ services:
   wordle-api:
     build:
       context: ./Backend/Wordle API
-      dockerfile: Dockerfile
+      dockerfile: dockerfile.prodWordAPI  # Production-specific Dockerfile
     ports:
       - "5001:5001"
-    volumes:
-      - ./Backend/Wordle API:/app:cached
     environment:
-      - MYSQL_HOST=${MYSQL_HOST}
+      - FLASK_ENV=production
+      - MYSQL_HOST=db
       - MYSQL_PORT=3306
       - MYSQL_DB=${MYSQL_DB}
       - MYSQL_USER=${MYSQL_USER}
@@ -37,17 +41,12 @@ services:
   frontend:
     build:
       context: ./frontend/wordle-frontend
-      dockerfile: Dockerfile
+      dockerfile: dockerfile.prodFront  # Production-specific Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend/wordle-frontend:/app:cached
-      - /app/node_modules
     environment:
-      - CHOKIDAR_USEPOLLING=true  # Enable polling
-      - CHOKIDAR_INTERVAL=500    # Optional: Poll every 500ms
-      - NEXT_PUBLIC_API_URL=http://localhost:5000
-      - NEXT_PUBLIC_WORDLE_API_URL=http://localhost:5001
+      - NEXT_PUBLIC_API_URL=http://login-api:5000
+      - NEXT_PUBLIC_WORDLE_API_URL=http://wordle-api:5001
     networks:
       - app-network
     restart: always
@@ -60,7 +59,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql
     ports:
-      - "3307:3306"
+      - "3307:3306"  # Expose database for external access (optional)
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s

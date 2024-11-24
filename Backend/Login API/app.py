@@ -12,7 +12,6 @@ CORS(app, origins=["http://localhost:3000", "http://51.12.49.77", "http://localh
 
 
 
-
 @app.route("/")
 def home():
     return jsonify({"message": "Hello World Login API!"}), 200

@@ -19,7 +19,7 @@ export default function Home() {
               src/app/page.tsx
             </code>
           </li>
-          <li>Save see your OH changes instantly.</li>
+          <li>Save see your OH  changes instantly.</li>
         </ol>
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">

@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "chokidar": "^4.0.1"
+    "chokidar": "^4.0.1",
+    "next": "^15.0.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12"
   }
 }

@@ -10,3 +10,7 @@
 
 *.tar
 
+app.cpython-310.pyc
+/Backend/Wordle API/__pycache__
+/Backend/Wordle API/__pycache__
+/Backend/Wordle API/components/__pycache__

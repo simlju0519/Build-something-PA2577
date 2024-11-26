@@ -85,3 +85,34 @@ class DatabaseConnection:
             self.close()  # Close the connection and cursor
 
         return response
+
+    def execute_many(self, query, params):
+        """
+        Execute a query on the database with multiple sets of parameters.
+
+        :param query: The query to execute
+        :param params: A list of tuples containing the parameters
+           Example: db.execute_many("INSERT INTO table (col1, col2) VALUES (%s, %s)", [(val1, val2), (val3, val4)])
+        
+        :return: The number of rows affected
+        """
+        connection, cursor = self.connect()
+
+        if connection is None:
+            raise Exception("Failed to connect to the database")
+
+        response = None
+
+        try:
+            # Execute the query with multiple sets of parameters
+            response = cursor.executemany(query, params)
+            connection.commit()
+
+        except mysql.connector.Error as e:
+            print(f"Error executing query: {e}")
+            raise # Re-raise the exception
+
+        finally:
+            self.close()
+
+        return response

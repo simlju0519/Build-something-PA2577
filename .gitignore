@@ -1,2 +1,12 @@
-node_modules/
+# Ignore all __pycache__ directories at any level
+**/__pycache__/
+**/node_modules/
+
+# Ignore compiled Python files
+*.py[cod]
 .env
+
+.DS_Store
+
+*.tar
+

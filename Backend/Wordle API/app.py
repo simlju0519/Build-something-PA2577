@@ -44,6 +44,49 @@ def insert_data():
     
     return jsonify({"message": "Data inserted"}), 200
 
+@app.route("/make-guess", methods=["GET"])
+def make_guess():
+    """
+    Params of the request
+    correctChars - characters    
+        Example: correctChars=_s__d
+    excludedChars - Plai string of excluded characters
+        Example: excludedChars='cdfe'
+    includedChars - Plain string of included characters
+        Example: includedChars='ab'
+    """
+
+    # Get the parameters from the request
+    correct_chars = request.args.get("correctChars")
+    excluded_chars = request.args.get("excludedChars")
+    included_chars = request.args.get("includedChars")
+
+    print(correct_chars, excluded_chars, included_chars, flush=True)
+
+    # Make the request to the Wordle API
+    formated_correct_chars = ""
+    for c in correct_chars:
+        if c == " ":
+            formated_correct_chars += "_"
+        else:
+            formated_correct_chars += c
+    
+    print(formated_correct_chars, flush=True)
+
+    query = "SELECT word FROM word WHERE word LIKE (%s)", (formated_correct_chars,)
+
+
+    print(query, flush=True)
+
+    response = db.execute_query(
+        "SELECT word FROM word WHERE word LIKE (%s)",
+        (formated_correct_chars,)
+    )
+
+    # print(response, flush=True)
+
+    # Return the response from the Wordle API
+    return jsonify({"answare": response}), 200
 
 
 

@@ -33,7 +33,7 @@ export default function RootLayout({
 
           <TopTabbar />
         </header>
-        <main className="">
+        <main className="mt-[130px]">
           {children}
         </main>
       </body>

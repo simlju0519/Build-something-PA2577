@@ -1,34 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import makeApiRequest from '@/hooks/useApi';
-
-const PotentialWordsList: React.FC<{ words: string[] }> = ({ words }) => {
-    if (words.length === 0) {
-        return (
-            <div className="potential-words-list mt-4 w-full">
-                <h3 className="text-lg font-semibold text-gray-700">Potential Words:</h3>
-                <p className="text-gray-500 mt-2">No words match your criteria. Try adjusting your inputs.</p>
-            </div>
-        );
-    }
-
-    return (
-        <div className="potential-words-list mt-4 w-full">
-            <h3 className="text-lg font-semibold text-gray-700">Potential Words:</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
-                {words.map((word, index) => (
-                    <div
-                        key={index}
-                        className="word-item border p-3 rounded-lg text-center text-gray-800 font-medium bg-white shadow-sm hover:shadow-md transition duration-200 ease-in-out"
-                        aria-label={`Word: ${word}`}
-                    >
-                        {word}
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-};
-
+import PotentialWordsList from './potentialWordsListComponent';
 
 interface GuessAreaProps {
     lengthOfWord: number;
@@ -124,11 +96,10 @@ const GuessAreaComponent: React.FC<GuessAreaProps> = ({ lengthOfWord }) => {
             setPotentialWords(response.answare);
             console.log(response.answare);
         }
-
     }
 
     return (
-        <div className="guess-area flex flex-col items-center justify-center">
+        <div className="guess-area flex flex-col items-center justify-center w-1/2">
             {/* Clearing button */}
             <button className="submit-button bg-red-500 text-white px-4 py-2 mt-4" onClick={handleClear}>
                 clear
@@ -146,6 +117,7 @@ const GuessAreaComponent: React.FC<GuessAreaProps> = ({ lengthOfWord }) => {
                         className="guess-input border text-center mx-1"
                         value={char === ' ' ? '' : char} // Show empty if it's a space
                         onChange={(e) => handleCorrectInputChange(index, e.target.value)}
+                        style={{ width: '50px' }}
                     />
                 ))}
             </div>

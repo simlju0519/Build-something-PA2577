@@ -30,7 +30,6 @@ const TopTabbar: React.FC = () => {
     const pathname = usePathname();
     const lastRoute = pathname?.split('/').pop();
 
-    console.log('lastRoute', lastRoute);
 
     return (
         <div className='TopTabbar h-[120px] bg-gray-500 flex  items-center'>

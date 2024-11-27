@@ -18,7 +18,7 @@ CORS(app, origins=["http://localhost:3000", "http://51.12.49.77", "http://localh
 @app.route("/", methods=["GET"])
 def home():
     print("Executing query", flush=True)
-    result = db.execute_query("SELECT * FROM word")
+    result = db.execute_query("SELECT * FROM words")
     return jsonify({"message": result}), 200
 
 
@@ -34,7 +34,7 @@ def insert_data():
     try:
         # Use executemany for batch insertion
         db.execute_many(
-            "INSERT INTO word (word) VALUES (%s)",
+            "INSERT INTO words (word) VALUES (%s)",
             [(word,) for word in words]
         )
         print(f"Inserted {len(words)} words", flush=True)
@@ -79,8 +79,14 @@ def make_guess():
         "INSERT INTO wordle_search (correct_chars, excluded_chars, included_chars) VALUES (%s, %s, %s)", 
         (correct_chars, excluded_chars, included_chars)
     )
+    # Get the id of the search
+    wordle_search_id = db.execute_query(
+        "SELECT wordle_search_id FROM wordle_search WHERE correct_chars = %s AND excluded_chars = %s AND included_chars = %s ORDER BY searched_time DESC LIMIT 1",
+        (correct_chars, excluded_chars, included_chars)
+    )[0]['wordle_search_id']
 
-    base_query = "SELECT word FROM word WHERE word LIKE %s"
+
+    base_query = "SELECT * FROM words WHERE word LIKE %s"
     params = [formated_correct_chars]
 
     if excluded_chars:
@@ -96,13 +102,19 @@ def make_guess():
 
     print(base_query, params, flush=True)
 
-    response = db.execute_query(base_query, params)
+    original_response = db.execute_query(base_query, params)
 
+    print("Response:", original_response, flush=True)
+
+    db.execute_many(
+        "INSERT INTO word_provided_link (word_search_id, words_id) VALUES (%s, %s)",
+        [(wordle_search_id, word["words_id"]) for word in original_response]
+    )
     
     # Response is a list of words for an example
     # [{"word": "apple"}, {"word": "apply"}]
     # Only provide the words
-    response = [word["word"] for word in response]
+    response = [word["word"] for word in original_response]
 
     # Return the response from the Wordle API
     return jsonify({"answare": response}), 200
@@ -115,7 +127,37 @@ def get_top_recent_searches(amount_limit):
     """
     response = db.execute_query("SELECT * FROM wordle_search ORDER BY searched_time DESC LIMIT %s", (amount_limit,))
     return jsonify({"recent_searches": response}), 200
+
+
+@app.route("/get_search/<int:wordle_search_id>", methods=["GET"])
+def get_search(wordle_search_id):
+    """
+    Get the top recent searches
+    """
+    wordle_search = db.execute_query("SELECT * FROM wordle_search WHERE wordle_search_id = %s", (wordle_search_id,))
+
+    if not wordle_search:
+        return jsonify({"error": "No search found"}), 404
     
+    word_provided_links = db.execute_query("SELECT * FROM word_provided_link WHERE word_search_id = %s", (wordle_search_id,))
+
+    words_id_lst = [word["words_id"] for word in word_provided_links]
+
+    print("Words id list:", words_id_lst, flush=True)
+
+    if not words_id_lst:
+        return jsonify({"error": "No words found for the given search"}), 404
+
+    placeholders = ', '.join(['%s'] * len(words_id_lst))
+    query = f"SELECT * FROM words WHERE words_id IN ({placeholders})"
+    words = db.execute_query(query, tuple(words_id_lst))
+
+    response = {
+        "wordle_search": wordle_search,
+        "words": words
+    }
+
+    return jsonify({"search": response}), 200
 
 
 # Convert the WSGI Flask app to ASGI

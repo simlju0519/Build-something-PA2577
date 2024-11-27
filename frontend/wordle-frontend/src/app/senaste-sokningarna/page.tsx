@@ -1,6 +1,9 @@
 import React from 'react';
 
 const AktivaSokningarPage: React.FC = () => {
+
+    // const get
+
     return (
         <div>
             <h1>Aktiva Sökingar</h1>

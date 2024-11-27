@@ -1,17 +1,17 @@
 version: '3.9'
 
 services:
-  login-api:
-    build:
-      context: ./Backend/Login API
-      dockerfile: Dockerfile
-    volumes:
-      - ./Backend/Login API:/app:cached
-    ports:
-      - "5000:5000"
-    networks:
-      - app-network
-    restart: always
+  # login-api:
+  #   build:
+  #     context: ./Backend/Login API
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./Backend/Login API:/app:cached
+  #   ports:
+  #     - "5000:5000"
+  #   networks:
+  #     - app-network
+  #   restart: always
 
   wordle-api:
     build:

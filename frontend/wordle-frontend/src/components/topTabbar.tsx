@@ -40,7 +40,7 @@ const TopTabbar: React.FC = () => {
                 </div>
                 <div className='flex ml-4 space-x-4'>
                     <RedirectButton link='/' text='HEM' isActive={lastRoute === ""} />
-                    <RedirectButton link='/aktivaSokningar' text='AKTIVA SÖKNINGAR' isActive={lastRoute === "aktivaSokningar"} />
+                    <RedirectButton link='/senaste-sokningarna' text='SENASTE SÖKNINGARNA' isActive={lastRoute === "senaste-sokningarna"} />
                 </div>
             </div>
         </div>

@@ -62,6 +62,10 @@ kubectl delete secret db
 
 ```sql
 mysql -u root -p
+<Write your password here>
+```
+```
+use wordlebase;
 ```
 
 ```sql

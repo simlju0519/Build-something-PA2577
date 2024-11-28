@@ -102,13 +102,13 @@ const GuessAreaComponent: React.FC<GuessAreaProps> = ({ lengthOfWord }) => {
         <div className="guess-area flex flex-col items-center justify-center w-1/2">
             {/* Clearing button */}
             <button className="submit-button bg-red-500 text-white px-4 py-2 mt-4" onClick={handleClear}>
-                clear
+                Ränsa
             </button>
             
 
             {/* Correct Characters */}
             <div className="correct-characters flex my-2">
-                <h3 className="mr-4">Correct:</h3>
+                <h3 className="mr-4">Korrekta bokstäver:</h3>
                 {correctCharacters.map((char, index) => (
                     <input
                         key={`correct-${index}`}
@@ -124,7 +124,7 @@ const GuessAreaComponent: React.FC<GuessAreaProps> = ({ lengthOfWord }) => {
 
             {/* Excluded Characters */}
             <div className="excluded-characters flex my-2">
-                <h3 className="mr-4">Excluded:</h3>
+                <h3 className="mr-4">Exkluderade bokstäver:</h3>
                 <input
                     type="text"
                     className="guess-input border w-full"
@@ -135,7 +135,7 @@ const GuessAreaComponent: React.FC<GuessAreaProps> = ({ lengthOfWord }) => {
 
             {/* Wrongly Positioned Characters */}
             <div className="wrongly-positioned-characters flex my-2">
-                <h3 className="mr-4">Wrongly Positioned:</h3>
+                <h3 className="mr-4">Felpacerade bokstäver:</h3>
                 <input
                     type="text"
                     className="guess-input border w-full"
@@ -147,7 +147,7 @@ const GuessAreaComponent: React.FC<GuessAreaProps> = ({ lengthOfWord }) => {
             {/* Submit Button */}
             <button className="submit-button bg-blue-500 text-white px-4 py-2 mt-4" onClick={sendGuess}>
                 {
-                    isLoading ? 'Loading...' : 'Submit'
+                    isLoading ? 'Laddar...' : 'Få potentiella ord!'
                 }
             </button>
             

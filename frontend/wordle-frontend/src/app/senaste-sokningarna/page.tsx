@@ -98,11 +98,11 @@ const AktivaSokningarPage: React.FC = () => {
     }, [amountOfRecentSearches]);
 
     useEffect(() => {
-        // const interval = setInterval(() => {
-        //     getRecentSearches();
-        // }, 1000);
+        const interval = setInterval(() => {
+            getRecentSearches();
+        }, 1000);
         getRecentSearches();
-        // return () => clearInterval(interval);
+        return () => clearInterval(interval);
     }, []);
 
     return (

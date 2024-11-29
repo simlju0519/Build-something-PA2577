@@ -42,6 +42,10 @@ kubectl get services
 minikube tunnel
 ```
 
+## Open the application:
+```bash
+http://localhost/
+```
 
 ## Clean Up:
 ```bash

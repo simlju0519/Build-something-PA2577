@@ -36,7 +36,7 @@ kubectl get pods
 kubectl get services
 ```
 
-## open up the tunnel if needed:
+## Open up the tunnel if needed:
 
 ```bash
 minikube tunnel

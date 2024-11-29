@@ -65,6 +65,10 @@ kubectl exec -it db-<pod-id> -- /bin/bash
 Then login to mysql:
 ```bash
 mysql -u root -p
+<Write your password here>
+```
+```
+use wordlebase;
 ```
 
 Then create the database wordlebase if it does not exist:

@@ -23,6 +23,12 @@ kubectl apply -f backend-deployment.yaml
 kubectl apply -f frontend-deployment.yaml
 ```
 
+## or deploy the whole shit:
+
+```bash
+kubectl apply -f wordle-app-deployment.yaml
+```
+
 ## Verify Deployments:
 
 ```bash

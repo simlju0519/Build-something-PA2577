@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: TnIxdGVhY2hlcklzQmlnQm9zc01pa2FlbFN2YWhuYmVyZw==
+  MYSQL_DB: d29yZGxlYmFzZQ==
+  MYSQL_USER: cm9vdA==
+  MYSQL_PASSWORD: TnIxdGVhY2hlcklzQmlnQm9zc01pa2FlbFN2YWhuYmVyZw==
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: MYSQL_DB
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-persistent-storage
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  selector:
+    app: db
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordle-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordle-frontend
+  template:
+    metadata:
+      labels:
+        app: wordle-frontend
+    spec:
+      containers:
+        - name: wordle-frontend
+          image: simlju0519/wordle-frontend:latest
+          ports:
+            - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordle-frontend
+spec:
+  selector:
+    app: wordle-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordle-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordle-backend
+  template:
+    metadata:
+      labels:
+        app: wordle-backend
+    spec:
+      containers:
+        - name: wordle-backend
+          image: simlju0519/wordle-backend:latest
+          ports:
+            - containerPort: 5001
+          env:
+            - name: MYSQL_HOST
+              value: "db"
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_DB
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: MYSQL_DB
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: MYSQL_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordle-backend
+spec:
+  selector:
+    app: wordle-backend
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+  type: LoadBalancer
+

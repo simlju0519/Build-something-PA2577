@@ -4,15 +4,7 @@
 ## DEV:
 docker-compose up --build
 
-## PROD:
-docker-compose -f docker-compose.prod.yml build
-
-
-## Deploy:
-```
-kubectl apply -f db-secret.yaml
-```
-
+# Deploy to Minikube:
 ## Deploy Database:
 
 ```bash
@@ -23,14 +15,12 @@ kubectl apply -f db-deployment.yaml
 
 ```bash
 kubectl apply -f backend-deployment.yaml
-kubectl apply -f backend-service.yaml
 ```
 
 ## Deploy Frontend:
 
 ```bash
 kubectl apply -f frontend-deployment.yaml
-kubectl apply -f frontend-service.yaml
 ```
 
 ## Verify Deployments:
@@ -40,29 +30,49 @@ kubectl get pods
 kubectl get services
 ```
 
-## Port Forwarding:
+## open up the tunnel if needed:
 
 ```bash
-kubectl port-forward service/backend 5001:5001
-kubectl port-forward service/frontend 8080:80
+minikube tunnel
 ```
 
 
 ## Clean Up:
 ```bash
+kubectl delete deployment wordle-frontend
+kubectl delete service wordle-frontend
+
+kubectl delete deployment wordle-backend
+kubectl delete service wordle-backend
+
 kubectl delete deployment db
-kubectl delete deployment backend
-kubectl delete deployment frontend
-kubectl delete service backend
-kubectl delete service frontend
-kubectl delete secret db
+kubectl delete service db
+kubectl delete pvc mysql-pvc
+kubectl delete secret db-secret
+```
+
+Or if you got the guts:
+```bash
+kubectl delete all --all
 ```
 
 ## Database Schema:
+Go into the mysql pod:
+```bash
+kubectl exec -it db-<pod-id> -- /bin/bash
+```
 
-```sql
+Then login to mysql:
+```bash
 mysql -u root -p
 ```
+
+Then create the database wordlebase if it does not exist:
+```sql
+CREATE DATABASE wordlebase;
+```
+
+Then create the tables in wordlebase:
 
 ```sql
 -- Adminer 4.8.1 MySQL 8.0.39 dump
@@ -109,3 +119,9 @@ CREATE TABLE `words` (
 -- 2024-11-28 17:59:53
 ```
 
+
+Then inert the words by using the following endpoint:
+```bash
+POST http://localhost:3000/insert/words
+```
+with a body from the file `words.json`
